@@ -48,7 +48,7 @@ struct StartView: View {
                             optionButton(
                                 title: mode.rawValue,
                                 isSelected: config.gameMode == mode,
-                                isEnabled: mode == .classic2D  // 3D noch nicht verfügbar
+                                isEnabled: true
                             ) {
                                 config.gameMode = mode
                             }

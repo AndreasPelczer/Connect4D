@@ -17,11 +17,19 @@ struct Connect4DApp: App {
     var body: some Scene {
         WindowGroup {
             if showGame {
-                GameView(
-                    config: config,
-                    theme: theme,
-                    onBack: { showGame = false }
-                )
+                if config.gameMode == .classic2D {
+                    GameView(
+                        config: config,
+                        theme: theme,
+                        onBack: { showGame = false }
+                    )
+                } else {
+                    Game3DView(
+                        config: config,
+                        theme: theme,
+                        onBack: { showGame = false }
+                    )
+                }
             } else {
                 StartView(
                     config: $config,
