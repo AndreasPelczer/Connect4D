@@ -10,24 +10,42 @@ import SwiftUI
 
 struct GameView: View {
     @State private var viewModel = GameViewModel()
+    let config: GameConfig
+    let theme: GameTheme
+    let onBack: () -> Void
     
     var body: some View {
         ZStack {
-            viewModel.theme.backgroundColor
+            theme.backgroundColor
                 .ignoresSafeArea()
             
             VStack(spacing: 20) {
+                // Zurück-Button
+                HStack {
+                    Button(action: onBack) {
+                        HStack(spacing: 4) {
+                            Image(systemName: "chevron.left")
+                            Text("Menü")
+                        }
+                        .font(.subheadline)
+                        .foregroundColor(theme.textColor.opacity(0.7))
+                    }
+                    Spacer()
+                }
+                .padding(.horizontal)
+                .padding(.top, 8)
+                
                 Spacer()
                 
                 HeaderView(
                     gameState: viewModel.gameState,
-                    theme: viewModel.theme
+                    theme: theme
                 )
                 
                 BoardView(
                     board: viewModel.board,
                     winningCells: viewModel.winningCells,
-                    theme: viewModel.theme,
+                    theme: theme,
                     lastDrop: viewModel.lastDrop,
                     animatingDrop: viewModel.animatingDrop,
                     onColumnTap: { column in
@@ -36,72 +54,27 @@ struct GameView: View {
                 )
                 .padding(.horizontal)
                 
-                // Modus-Auswahl
-                HStack(spacing: 4) {
-                    modeButton(title: "2 Spieler", isSelected: !viewModel.singlePlayer) {
-                        viewModel.singlePlayer = false
-                        viewModel.startGame()
-                    }
-                    modeButton(title: "vs KI", isSelected: viewModel.singlePlayer) {
-                        viewModel.singlePlayer = true
-                        viewModel.startGame()
-                    }
-                }
-                .padding(.horizontal, 40)
-                
-                HStack(spacing: 16) {
-                    Button(action: {
-                        viewModel.startGame()
-                    }) {
-                        Text(buttonText)
-                            .font(.headline)
-                            .foregroundColor(.white)
-                            .padding(.horizontal, 24)
-                            .padding(.vertical, 12)
-                            .background(
-                                RoundedRectangle(cornerRadius: 10)
-                                    .fill(viewModel.theme.buttonColor)
-                            )
-                    }
-                    
-                    Button(action: {
-                        viewModel.toggleTheme()
-                    }) {
-                        Image(systemName: viewModel.theme == .wood ? "hammer.fill" : "leaf.fill")
-                            .font(.title2)
-                            .foregroundColor(viewModel.theme.textColor)
-                            .padding(12)
-                            .background(
-                                Circle()
-                                    .fill(viewModel.theme.boardColor.opacity(0.5))
-                            )
-                    }
+                Button(action: {
+                    viewModel.startGame()
+                }) {
+                    Text("Neues Spiel")
+                        .font(.headline)
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 24)
+                        .padding(.vertical, 12)
+                        .background(
+                            RoundedRectangle(cornerRadius: 10)
+                                .fill(theme.buttonColor)
+                        )
                 }
                 
                 Spacer()
             }
         }
-    }
-    
-    private func modeButton(title: String, isSelected: Bool, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            Text(title)
-                .font(.subheadline)
-                .fontWeight(isSelected ? .bold : .regular)
-                .foregroundColor(isSelected ? .white : viewModel.theme.textColor)
-                .padding(.horizontal, 20)
-                .padding(.vertical, 8)
-                .background(
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(isSelected ? viewModel.theme.buttonColor : viewModel.theme.boardColor.opacity(0.3))
-                )
-        }
-    }
-    
-    private var buttonText: String {
-        switch viewModel.gameState {
-        case .idle: return "Spiel starten"
-        default: return "Neues Spiel"
+        .onAppear {
+            viewModel.singlePlayer = (config.opponentMode == .ai)
+            viewModel.theme = theme
+            viewModel.startGame()
         }
     }
 }
