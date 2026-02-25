@@ -64,16 +64,12 @@ class GameViewModel3D {
     }
     
     private func performAIMove() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) { [weak self] in
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
             guard let self else { return }
-            // Einfache KI: zufällige Spalte (Minimax für 3D kommt später)
-            let available = (0..<(Board3D.size * Board3D.size)).filter { idx in
-                let coords = Board3D.coordinates(from: idx)
-                return self.board.canDrop(x: coords.x, z: coords.z)
+            let move = AIPlayer3D.bestMove(board: self.board, player: .white)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                self.dropPiece(x: move.x, z: move.z)
             }
-            guard let randomIdx = available.randomElement() else { return }
-            let coords = Board3D.coordinates(from: randomIdx)
-            self.dropPiece(x: coords.x, z: coords.z)
         }
     }
     
@@ -81,3 +77,4 @@ class GameViewModel3D {
         startGame()
     }
 }
+
