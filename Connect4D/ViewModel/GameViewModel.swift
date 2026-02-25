@@ -38,6 +38,11 @@ class GameViewModel {
         lastDrop = position
         animatingDrop = true
         
+        // Drop-Sound nach kurzer Verzögerung (wenn Stein "aufkommt")
+         DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+             SoundManager.shared.playDropSound()
+         }
+        
         // Gewinnprüfung nach kurzer Verzögerung (Animation abwarten)
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) { [weak self] in
             guard let self else { return }
@@ -46,6 +51,7 @@ class GameViewModel {
             if let winPositions = WinChecker.checkWin(board: self.board, lastMove: position) {
                 self.winningCells = winPositions
                 self.gameState = .won(currentPlayer)
+                SoundManager.shared.playWinSound()       // Win-Sound
                 return
             }
             
