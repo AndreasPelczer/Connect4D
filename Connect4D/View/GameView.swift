@@ -36,6 +36,19 @@ struct GameView: View {
                 )
                 .padding(.horizontal)
                 
+                // Modus-Auswahl
+                HStack(spacing: 4) {
+                    modeButton(title: "2 Spieler", isSelected: !viewModel.singlePlayer) {
+                        viewModel.singlePlayer = false
+                        viewModel.startGame()
+                    }
+                    modeButton(title: "vs KI", isSelected: viewModel.singlePlayer) {
+                        viewModel.singlePlayer = true
+                        viewModel.startGame()
+                    }
+                }
+                .padding(.horizontal, 40)
+                
                 HStack(spacing: 16) {
                     Button(action: {
                         viewModel.startGame()
@@ -67,6 +80,21 @@ struct GameView: View {
                 
                 Spacer()
             }
+        }
+    }
+    
+    private func modeButton(title: String, isSelected: Bool, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Text(title)
+                .font(.subheadline)
+                .fontWeight(isSelected ? .bold : .regular)
+                .foregroundColor(isSelected ? .white : viewModel.theme.textColor)
+                .padding(.horizontal, 20)
+                .padding(.vertical, 8)
+                .background(
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(isSelected ? viewModel.theme.buttonColor : viewModel.theme.boardColor.opacity(0.3))
+                )
         }
     }
     

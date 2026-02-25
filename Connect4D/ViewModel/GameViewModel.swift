@@ -16,6 +16,7 @@ class GameViewModel {
     private(set) var lastDrop: (column: Int, row: Int)?
     private(set) var animatingDrop = false
     var theme: GameTheme = .wood
+    var singlePlayer = false        // NEU
     
     func toggleTheme() {
         theme = (theme == .wood) ? .industrial : .wood
@@ -31,19 +32,16 @@ class GameViewModel {
     
     func dropPiece(in column: Int) {
         guard case .playing(let currentPlayer) = gameState else { return }
-        guard !animatingDrop else { return }  // Kein Doppelklick während Animation
+        guard !animatingDrop else { return }
         guard let position = board.dropPiece(in: column, player: currentPlayer) else { return }
         
-        // Animation triggern
         lastDrop = position
         animatingDrop = true
         
-        // Drop-Sound nach kurzer Verzögerung (wenn Stein "aufkommt")
-         DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
-             SoundManager.shared.playDropSound()
-         }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+            SoundManager.shared.playDropSound()
+        }
         
-        // Gewinnprüfung nach kurzer Verzögerung (Animation abwarten)
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) { [weak self] in
             guard let self else { return }
             self.animatingDrop = false
@@ -51,7 +49,7 @@ class GameViewModel {
             if let winPositions = WinChecker.checkWin(board: self.board, lastMove: position) {
                 self.winningCells = winPositions
                 self.gameState = .won(currentPlayer)
-                SoundManager.shared.playWinSound()       // Win-Sound
+                SoundManager.shared.playWinSound()
                 return
             }
             
@@ -60,7 +58,22 @@ class GameViewModel {
                 return
             }
             
-            self.gameState = .playing(currentPlayer.toggled)
+            let nextPlayer = currentPlayer.toggled
+            self.gameState = .playing(nextPlayer)
+            
+            // KI-Zug wenn Einzelspieler und Weiß dran
+            if self.singlePlayer && nextPlayer == .white {
+                self.performAIMove()
+            }
+        }
+    }
+    
+    private func performAIMove() {
+        // Kurze Verzögerung damit es natürlich wirkt
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) { [weak self] in
+            guard let self else { return }
+            let column = AIPlayer.bestMove(board: self.board, player: .white)
+            self.dropPiece(in: column)
         }
     }
     
