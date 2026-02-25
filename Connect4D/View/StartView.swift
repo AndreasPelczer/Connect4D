@@ -45,10 +45,11 @@ struct StartView: View {
                     
                     HStack(spacing: 4) {
                         ForEach(GameMode.allCases, id: \.self) { mode in
+                            let enabled = mode == .classic2D
                             optionButton(
-                                title: mode.rawValue,
+                                title: enabled ? mode.rawValue : "\(mode.rawValue) – Bald",
                                 isSelected: config.gameMode == mode,
-                                isEnabled: mode == .classic2D  // 3D noch nicht verfügbar
+                                isEnabled: enabled
                             ) {
                                 config.gameMode = mode
                             }
