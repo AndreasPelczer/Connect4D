@@ -30,9 +30,13 @@ struct StartView: View {
                         .font(.system(size: 64, weight: .black))
                         .foregroundColor(theme.winHighlight)
                 }
+                .accessibilityElement(children: .combine)
+                .accessibilityLabel("Connect 4D")
+                .accessibilityAddTraits(.isHeader)
                 
                 // Mini-Vorschau: 4 Steine diagonal
                 previewBoard
+                    .accessibilityHidden(true)
                 
                 Spacer()
                 

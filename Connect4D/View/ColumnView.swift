@@ -36,6 +36,18 @@ struct ColumnView: View {
         .onTapGesture {
             onTap()
         }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Spalte \(columnIndex + 1)")
+        .accessibilityHint(columnHint)
+        .accessibilityAddTraits(.isButton)
+    }
+
+    private var columnHint: String {
+        let filled = cells.count
+        if filled >= Board.rows {
+            return "Voll"
+        }
+        return "Tippen um Stein einzuwerfen, \(filled) von \(Board.rows) belegt"
     }
     
     private func shouldAnimate(row: Int) -> Bool {

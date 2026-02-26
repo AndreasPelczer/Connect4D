@@ -29,6 +29,9 @@ struct HeaderView: View {
                 .foregroundColor(theme.textColor)
         }
         .padding()
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(statusText)
+        .accessibilityAddTraits(.updatesFrequently)
     }
     
     private var statusText: String {

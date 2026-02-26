@@ -64,11 +64,11 @@ class GameViewModel3D {
     }
     
     private func performAIMove() {
-        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
-            guard let self else { return }
-            let move = AIPlayer3D.bestMove(board: self.board, player: .white)
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                self.dropPiece(x: move.x, z: move.z)
+        let boardCopy = board
+        DispatchQueue.global(qos: .userInitiated).async {
+            let move = AIPlayer3D.bestMove(board: boardCopy, player: .white)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
+                self?.dropPiece(x: move.x, z: move.z)
             }
         }
     }
