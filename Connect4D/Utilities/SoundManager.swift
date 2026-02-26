@@ -10,12 +10,14 @@ import AVFoundation
 
 class SoundManager {
     static let shared = SoundManager()
-    
+
     private var audioPlayer: AVAudioPlayer?
-    
+    var isMuted = false
+
     private init() {}
-    
+
     func playDropSound() {
+        guard !isMuted else { return }
         // Erzeuge einen kurzen "Klack" per Synthese
         let sampleRate: Double = 44100
         let duration: Double = 0.08
@@ -67,6 +69,7 @@ class SoundManager {
     }
     
     func playWinSound() {
+        guard !isMuted else { return }
         let sampleRate: Double = 44100
         let duration: Double = 0.3
         let frameCount = Int(sampleRate * duration)

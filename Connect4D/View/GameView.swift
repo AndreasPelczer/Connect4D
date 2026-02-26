@@ -30,6 +30,7 @@ struct GameView: View {
                         .font(.subheadline)
                         .foregroundColor(theme.textColor.opacity(0.7))
                     }
+                    .accessibilityLabel("Zurück zum Menü")
                     Spacer()
                 }
                 .padding(.horizontal)
@@ -54,20 +55,31 @@ struct GameView: View {
                 )
                 .padding(.horizontal)
                 
-                Button(action: {
-                    viewModel.startGame()
-                }) {
-                    Text("Neues Spiel")
-                        .font(.headline)
-                        .foregroundColor(.white)
-                        .padding(.horizontal, 24)
-                        .padding(.vertical, 12)
-                        .background(
-                            RoundedRectangle(cornerRadius: 10)
-                                .fill(theme.buttonColor)
-                        )
+                HStack(spacing: 16) {
+                    Button(action: {
+                        viewModel.startGame()
+                    }) {
+                        Text("Neues Spiel")
+                            .font(.headline)
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 24)
+                            .padding(.vertical, 12)
+                            .background(
+                                RoundedRectangle(cornerRadius: 10)
+                                    .fill(theme.buttonColor)
+                            )
+                    }
+
+                    Button(action: {
+                        SoundManager.shared.isMuted.toggle()
+                    }) {
+                        Image(systemName: SoundManager.shared.isMuted ? "speaker.slash.fill" : "speaker.wave.2.fill")
+                            .font(.title3)
+                            .foregroundColor(theme.textColor.opacity(0.7))
+                    }
+                    .accessibilityLabel(SoundManager.shared.isMuted ? "Ton einschalten" : "Ton ausschalten")
                 }
-                
+
                 Spacer()
             }
         }

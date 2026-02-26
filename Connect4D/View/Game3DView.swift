@@ -28,6 +28,7 @@ struct Game3DView: View {
                         .font(.subheadline)
                         .foregroundColor(theme.textColor.opacity(0.7))
                     }
+                    .accessibilityLabel("Zurück zum Menü")
                     Spacer()
                 }
                 .padding(.horizontal)
@@ -44,19 +45,32 @@ struct Game3DView: View {
                 )
                 .clipShape(RoundedRectangle(cornerRadius: 12))
                 .padding(.horizontal)
+                .accessibilityLabel("3D Spielbrett")
+                .accessibilityHint("Tippe auf eine Stange um einen Stein einzuwerfen")
                 
-                Button(action: {
-                    viewModel.startGame()
-                }) {
-                    Text("Neues Spiel")
-                        .font(.headline)
-                        .foregroundColor(.white)
-                        .padding(.horizontal, 24)
-                        .padding(.vertical, 12)
-                        .background(
-                            RoundedRectangle(cornerRadius: 10)
-                                .fill(theme.buttonColor)
-                        )
+                HStack(spacing: 16) {
+                    Button(action: {
+                        viewModel.startGame()
+                    }) {
+                        Text("Neues Spiel")
+                            .font(.headline)
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 24)
+                            .padding(.vertical, 12)
+                            .background(
+                                RoundedRectangle(cornerRadius: 10)
+                                    .fill(theme.buttonColor)
+                            )
+                    }
+
+                    Button(action: {
+                        SoundManager.shared.isMuted.toggle()
+                    }) {
+                        Image(systemName: SoundManager.shared.isMuted ? "speaker.slash.fill" : "speaker.wave.2.fill")
+                            .font(.title3)
+                            .foregroundColor(theme.textColor.opacity(0.7))
+                    }
+                    .accessibilityLabel(SoundManager.shared.isMuted ? "Ton einschalten" : "Ton ausschalten")
                 }
                 .padding(.bottom, 8)
             }
